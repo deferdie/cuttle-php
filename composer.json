@@ -1,0 +1,32 @@
+{
+  "name": "deferdie/cuttle-laravel",
+  "description": "Cuttle laravel driver",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ferdie De Oliveira",
+      "email": "deferdie@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Cuttle\\": "src/"
+    }
+  },
+  "require": {
+    "guzzlehttp/guzzle": "^6.3"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Cuttle\\CuttleServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "php artisan vendor:publish --provider='Cuttle/CuttleServiceProvider'"
+    ]
+  }
+}
