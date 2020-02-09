@@ -4,7 +4,7 @@ namespace Cuttle;
 
 use Illuminate\Support\ServiceProvider;
 
-class CatchServiceProvider extends ServiceProvider
+class CuttleServiceProvider extends ServiceProvider
 {
     /**
      * Perform post-registration booting of services.
@@ -14,7 +14,7 @@ class CatchServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/config/catch.php' => config_path('cuttle.php'),
+            __DIR__ . '/config/cuttle.php' => config_path('cuttle.php'),
         ]);
     }
 }
