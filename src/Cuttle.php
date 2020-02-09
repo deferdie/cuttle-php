@@ -3,6 +3,7 @@
 namespace Cuttle;
 
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Support\Arr;
 
 class Cuttle
@@ -515,6 +516,15 @@ class Cuttle
      */
     private function report()
     {
-        \Log::info($this->exception());
+        try {
+            $client = new Client();
+
+            $client->request('POST', 'http://cuttle-nginx/exception', [
+                'form_params' => $this->exception()
+            ]);
+        } catch (\Exception $e) {
+            dd($e);
+            \Log::error('Could not post exception to cuttle');
+        }
     }
 }
