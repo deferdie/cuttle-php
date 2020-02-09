@@ -23,10 +23,5 @@
         "Cuttle\\CuttleServiceProvider"
       ]
     }
-  },
-  "scripts": {
-    "post-install-cmd": [
-      "php artisan vendor:publish --provider='Cuttle/CuttleServiceProvider'"
-    ]
   }
 }
