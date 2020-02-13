@@ -572,7 +572,6 @@ class Cuttle
                 'form_params' => $this->exception()
             ]);
         } catch (\Exception $e) {
-            // dd($e);
             \Log::error('Could not post exception to cuttle');
         }
     }
