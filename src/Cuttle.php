@@ -537,7 +537,6 @@ class Cuttle
             'uri' => $this->uri,
             'file' => $this->file,
             'host' => $this->host,
-            'host' => $this->host,
             'method' => $this->method,
             'user_id' => $this->user_id,
             'message' => $this->message,
@@ -563,7 +562,7 @@ class Cuttle
      *
      * @return void
      */
-    private function report()
+    public function report()
     {
         try {
             $client = new Client();

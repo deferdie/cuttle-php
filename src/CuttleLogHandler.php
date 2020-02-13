@@ -17,10 +17,11 @@ class CuttleLogHandler implements HandlerInterface
         if (isset($record['context'])) {
             if (isset($record['context']['exception'])) {
                 $event = new Cuttle($record);
-
-                dd($event);
+                $event->report();
             }
         }
+
+        return true;
     }
 
     /**

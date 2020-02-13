@@ -2,6 +2,7 @@
 
 namespace Cuttle;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
 class CuttleServiceProvider extends ServiceProvider
@@ -13,7 +14,7 @@ class CuttleServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $loggingConfig = \Config::get('logging.channels');
+        $loggingConfig = Config::get('logging.channels');
 
         $cuttleLogger = ['cuttle' => [
             'driver' => 'monolog',
@@ -22,6 +23,6 @@ class CuttleServiceProvider extends ServiceProvider
 
         $mergedConfig = array_merge($cuttleLogger, $loggingConfig);
 
-        \Config::set('logging.channels', $mergedConfig);
+        Config::set('logging.channels', $mergedConfig);
     }
 }
