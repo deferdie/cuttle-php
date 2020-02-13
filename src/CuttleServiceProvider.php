@@ -13,8 +13,15 @@ class CuttleServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/config/cuttle.php' => config_path('cuttle.php'),
-        ]);
+        $loggingConfig = \Config::get('logging.channels');
+
+        $cuttleLogger = ['cuttle' => [
+            'driver' => 'monolog',
+            'handler' => \Cuttle\CuttleLogHandler::class
+        ]];
+
+        $mergedConfig = array_merge($cuttleLogger, $loggingConfig);
+
+        \Config::set('logging.channels', $mergedConfig);
     }
 }

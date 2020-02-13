@@ -142,16 +142,31 @@ class Cuttle
     public $gitHash = null;
 
     /**
+     * The user id.
+     *
+     * @var string
+     */
+    public $user_id = null;
+
+    /**
+     * The record event.
+     *
+     * @var array
+     */
+    public $record = [];
+
+    /**
      * Capture and parse the exception.
      *
-     * @param Exception $e
      * @return void
      */
-    public function capture(Exception $e)
+    public function __construct(array $record)
     {
-        $this->exception = $e;
+        $this->record = $record;
+        $this->exception = Arr::get($record, 'context.exception');
 
         $this->setHost()
+            ->setUser()
             ->setPort()
             ->setFile()
             ->setMethod()
@@ -168,8 +183,8 @@ class Cuttle
             ->setExceptionName()
             ->setLaravelVersion()
             ->setExceptionTime()
-            ->setLaravelConfigCached()
-            ->report();
+            ->setExceptionCode()
+            ->setLaravelConfigCached();
 
         return $this;
     }
@@ -203,6 +218,23 @@ class Cuttle
             $this->httpStatus = 500;
             return $this;
         }
+
+        if (Arr::get($this->record, 'level_name') === 'ERROR') {
+            $this->httpStatus = 500;
+            return $this;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets the exception name.
+     *
+     * @return void
+     */
+    public function setUser()
+    {
+        $this->user_id = Arr::get($this->record, 'context.userId');
 
         return $this;
     }
@@ -324,64 +356,69 @@ class Cuttle
     {
         $severity = null;
 
-        if (!method_exists($this->exception, 'getSeverity')) {
+        if (method_exists($this->exception, 'getSeverity') === false) {
             $this->severity = $severity;
-
             return $this;
         }
 
-        switch ($this->exception->getSeverity()) {
-            case 1:
-                $severity = 'E_ERROR';
-                break;
-            case 2:
-                $severity = 'E_WARNING';
-                break;
-            case 4:
-                $severity = 'E_PARSE';
-                break;
-            case 8:
-                $severity = 'E_NOTICE';
-                break;
-            case 16:
-                $severity = 'E_CORE_ERROR';
-                break;
-            case 32:
-                $severity = 'E_CORE_WARNING';
-                break;
-            case 64:
-                $severity = 'E_COMPILE_ERROR';
-                break;
-            case 128:
-                $severity = 'E_COMPILE_WARNING';
-                break;
-            case 256:
-                $severity = 'E_USER_ERROR';
-                break;
-            case 512:
-                $severity = 'E_USER_WARNING';
-                break;
-            case 1024:
-                $severity = 'E_USER_NOTICE';
-                break;
-            case 2048:
-                $severity = 'E_STRICT';
-                break;
-            case 4096:
-                $severity = 'E_RECOVERABLE_ERROR';
-                break;
-            case 8192:
-                $severity = 'E_DEPRECATED';
-                break;
-            case 16384:
-                $severity = 'E_USER_DEPRECATED';
-                break;
-            case 32767:
-                $severity = 'E_ALL';
-                break;
+        try {
+            switch ($this->exception->getSeverity()) {
+                case 1:
+                    $severity = 'E_ERROR';
+                    break;
+                case 2:
+                    $severity = 'E_WARNING';
+                    break;
+                case 4:
+                    $severity = 'E_PARSE';
+                    break;
+                case 8:
+                    $severity = 'E_NOTICE';
+                    break;
+                case 16:
+                    $severity = 'E_CORE_ERROR';
+                    break;
+                case 32:
+                    $severity = 'E_CORE_WARNING';
+                    break;
+                case 64:
+                    $severity = 'E_COMPILE_ERROR';
+                    break;
+                case 128:
+                    $severity = 'E_COMPILE_WARNING';
+                    break;
+                case 256:
+                    $severity = 'E_USER_ERROR';
+                    break;
+                case 512:
+                    $severity = 'E_USER_WARNING';
+                    break;
+                case 1024:
+                    $severity = 'E_USER_NOTICE';
+                    break;
+                case 2048:
+                    $severity = 'E_STRICT';
+                    break;
+                case 4096:
+                    $severity = 'E_RECOVERABLE_ERROR';
+                    break;
+                case 8192:
+                    $severity = 'E_DEPRECATED';
+                    break;
+                case 16384:
+                    $severity = 'E_USER_DEPRECATED';
+                    break;
+                case 32767:
+                    $severity = 'E_ALL';
+                    break;
+            }
+
+            $this->severity = $severity;
+        } catch (\Exception $e) {
+            $this->severity = $severity;
+            return $this;
         }
 
-        $this->severity = $severity;
 
         return $this;
     }
@@ -447,6 +484,18 @@ class Cuttle
     }
 
     /**
+     * Get the exception code.
+     *
+     * @return void
+     */
+    public function setExceptionCode()
+    {
+        $this->exception_code = $this->exception->getCode();
+
+        return $this;
+    }
+
+    /**
      * Sets Git status.
      *
      * @return void
@@ -488,8 +537,9 @@ class Cuttle
             'uri' => $this->uri,
             'file' => $this->file,
             'host' => $this->host,
-            'port' => $this->port,
+            'host' => $this->host,
             'method' => $this->method,
+            'user_id' => $this->user_id,
             'message' => $this->message,
             'created' => $this->created,
             'git_hash' => $this->gitHash,
@@ -502,11 +552,10 @@ class Cuttle
             'php_version' => $this->phpVersion,
             'stack_trace' => json_encode($this->stackTrace),
             'exception_name' => $this->exceptionName,
+            'exception_code' => $this->exceptionName,
             'laravel_version' => $this->laravelVersion,
             'laravel_config_cached' => $this->laravel_config_cached,
         ];
-
-        return $this;
     }
 
     /**
@@ -523,7 +572,7 @@ class Cuttle
                 'form_params' => $this->exception()
             ]);
         } catch (\Exception $e) {
-            dd($e);
+            // dd($e);
             \Log::error('Could not post exception to cuttle');
         }
     }
