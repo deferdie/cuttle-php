@@ -567,7 +567,7 @@ class Cuttle
         try {
             $client = new Client();
 
-            $client->request('POST', 'http://cuttle-nginx/exception', [
+            $client->request('POST', env('CUTTLE_HOST', 'http://cuttle-nginx') . '/exception', [
                 'form_params' => $this->exception()
             ]);
         } catch (\Exception $e) {
