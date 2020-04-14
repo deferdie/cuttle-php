@@ -156,6 +156,13 @@ class Cuttle
     public $record = [];
 
     /**
+     * The headers from the request.
+     *
+     * @var array
+     */
+    public $headers = [];
+
+    /**
      * Capture and parse the exception.
      *
      * @return void
@@ -170,6 +177,7 @@ class Cuttle
             ->setPort()
             ->setFile()
             ->setMethod()
+            ->setHeaders()
             ->setMessage()
             ->setSeverity()
             ->setProtocol()
@@ -185,6 +193,20 @@ class Cuttle
             ->setExceptionTime()
             ->setExceptionCode()
             ->setLaravelConfigCached();
+
+        return $this;
+    }
+
+    /**
+     * Sets the headers from the request.
+     *
+     * @return void
+     */
+    public function setHeaders()
+    {
+        if (function_exists('getallheaders')) {
+            $this->headers = getallheaders();
+        }
 
         return $this;
     }
@@ -553,6 +575,7 @@ class Cuttle
             'user_id' => $this->user_id,
             'message' => $this->message,
             'created' => $this->created,
+            'headers' => $this->headers,
             'git_hash' => $this->gitHash,
             'severity' => $this->severity,
             'protocol' => $this->protocol,
