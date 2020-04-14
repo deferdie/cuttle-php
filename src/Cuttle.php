@@ -160,7 +160,7 @@ class Cuttle
      *
      * @return void
      */
-    public function __construct(array $record)
+    public function __construct(array $record = [])
     {
         $this->record = $record;
         $this->exception = Arr::get($record, 'context.exception');
@@ -246,7 +246,9 @@ class Cuttle
      */
     public function setExceptionName()
     {
-        $this->exceptionName = get_class($this->exception);
+        if ($this->exception) {
+            $this->exceptionName = get_class($this->exception);
+        }
 
         return $this;
     }
@@ -258,7 +260,9 @@ class Cuttle
      */
     public function setStackTrace()
     {
-        $this->stackTrace = $this->exception->getTrace() ?? [];
+        if ($this->exception) {
+            $this->stackTrace = $this->exception->getTrace() ?? [];
+        }
 
         return $this;
     }
@@ -430,7 +434,9 @@ class Cuttle
      */
     public function setMessage()
     {
-        $this->message = $this->exception->getMessage();
+        if ($this->exception) {
+            $this->message = $this->exception->getMessage();
+        }
 
         return $this;
     }
@@ -442,7 +448,9 @@ class Cuttle
      */
     public function setLineNumber()
     {
-        $this->lineNumber = $this->exception->getLine();
+        if ($this->exception) {
+            $this->lineNumber = $this->exception->getLine();
+        }
 
         return $this;
     }
@@ -454,7 +462,9 @@ class Cuttle
      */
     public function setFile()
     {
-        $this->file = $this->exception->getFile();
+        if ($this->exception) {
+            $this->file = $this->exception->getFile();
+        }
 
         return $this;
     }
@@ -490,7 +500,9 @@ class Cuttle
      */
     public function setExceptionCode()
     {
-        $this->exception_code = $this->exception->getCode();
+        if ($this->exception) {
+            $this->exception_code = $this->exception->getCode();
+        }
 
         return $this;
     }
