@@ -599,14 +599,22 @@ class Cuttle
      */
     public function report()
     {
+        if ($cuttleApp === false) {
+            \Log::error('Could not post exception to Cuttle - CUTTLE_APP_ID env missing.');
+
+            return;
+        }
+
         try {
             $client = new Client();
+
+            $cuttleApp = env('CUTTLE_APP_ID', false);
 
             $client->request('POST', env('CUTTLE_HOST', 'http://cuttle-nginx') . '/exception', [
                 'form_params' => $this->exception()
             ]);
         } catch (\Exception $e) {
-            \Log::error('Could not post exception to cuttle');
+            \Log::error('Could not post exception to Cuttle');
         }
     }
 }
